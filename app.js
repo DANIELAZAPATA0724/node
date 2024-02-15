@@ -4,6 +4,7 @@ import cors from "cors";
 import db from "./database/db.js";
 //importamos nuestro enrutador
 import blogRoutes from "./routes/routes.js";
+import { PORT } from "./config.js";
 
 const app = express();
 
@@ -18,10 +19,10 @@ try {
   console.log(`El error de conexión es: ${error}`);
 }
 
-app.get('/', (req, res)=>{
-    res.send('HOLA MUNDO')
-})
+app.get("/", (req, res) => {
+  res.send("¡Hola Mundo.");
+});
 
-app.listen(8000, () => {
+app.listen(PORT, () => {
   console.log("Server UP running in http://localhost:8000/");
 });
