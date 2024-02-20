@@ -34,19 +34,36 @@ export const createBlog = async (req, res) => {
         res.json( {message: error.message} )
     }
 }
-//Actualizar un registro
-export const updateBlog = async (req, res) => {
+// Obtener un blog por ID antes de actualizar
+export const getBlogById = async (req, res, next) => {
     try {
-        await BlogModel.update(req.body, {
-            where: { id: req.params.id}
-        })
-        res.json({
-            "message":"¡Registro actualizado correctamente!"
-        })
+      const blog = await BlogModel.findByPk(req.params.id);
+      if (!blog) {
+        return res.status(404).json({ message: "Blog not found" });
+      }
+      req.blog = blog; // Añadir el blog a la solicitud para que esté disponible en la ruta de actualización
+      next();
     } catch (error) {
-        res.json( {message: error.message} )
+      res.status(500).json({ message: error.message });
     }
-}
+  };
+  
+  // Actualizar un registro
+  export const updateBlog = async (req, res) => {
+    try {
+      if (!req.blog) {
+        return res.status(404).json({ message: "Blog not found" });
+      }
+  
+      await req.blog.update(req.body); // Usar el blog obtenido de la solicitud
+      res.json({
+        message: "¡Registro actualizado correctamente!",
+      });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+  
 //Eliminar un registro
 export const deleteBlog = async (req, res) => {
     try {
